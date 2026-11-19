@@ -1,0 +1,97 @@
+/* AskBoard — Ask page. Builds on css/styles.css (tokens, navbar, buttons, chips). */
+
+a.nav-item { text-decoration: none; }
+
+.page-content.ask-page { max-width: 880px; padding-top: clamp(24px, 4vw, 48px); }
+.ask-card { padding: clamp(18px, 3vw, 28px); border-radius: 20px; }
+
+/* ── Top bar ── */
+.ask-topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.back-link { display: inline-flex; align-items: center; gap: 10px; color: var(--muted); text-decoration: none; font-size: 14px; transition: color .2s; }
+.back-link:hover { color: var(--text); }
+.back-link svg { width: 17px; height: 17px; }
+.doc-chip { display: inline-flex; align-items: center; gap: 8px; min-width: 0; max-width: 55%; font-size: 14px; font-weight: 500; color: var(--text); }
+.doc-chip svg { width: 17px; height: 17px; color: var(--lav); }
+.doc-chip span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ── Intro ── */
+.ask-intro { margin: 26px 0 20px; }
+.ask-intro h1 { font-size: clamp(24px, 3.2vw, 30px); letter-spacing: -.8px; margin: 0 0 8px; }
+.ask-intro p { color: var(--muted); font-size: 15px; margin: 0; }
+
+/* ── Question box ── */
+.ask-box { border: 1px solid var(--border); background: var(--surface-2); border-radius: 16px; padding: 12px; }
+.ask-box[hidden] { display: none; }
+.ask-box textarea { display: block; width: 100%; min-height: 88px; resize: vertical; padding: 14px; color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 10px; font: 400 16px/1.5 "DM Sans", sans-serif; transition: border-color .2s, box-shadow .2s; }
+.ask-box textarea::placeholder { color: var(--faint); }
+.ask-box textarea:focus { outline: 0; border-color: var(--lav); box-shadow: 0 0 0 3px var(--accent-soft); }
+.ask-box textarea:disabled { opacity: .6; cursor: not-allowed; }
+.ask-box-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+.ask-hint { color: var(--faint); font-size: 12px; }
+.ask-submit { display: inline-flex; align-items: center; gap: 9px; border: 0; border-radius: 999px; padding: 11px 20px; font-size: 14px; font-weight: 600; background: var(--btn-light-bg); color: var(--btn-light-fg); transition: filter .2s, opacity .2s; margin-left: auto; }
+.ask-submit svg { width: 16px; height: 16px; }
+.ask-submit:hover:not(:disabled) { filter: brightness(.95); }
+.ask-submit:disabled { opacity: .5; cursor: not-allowed; }
+.ask-submit.is-busy { cursor: wait; }
+
+/* ── No document ── */
+.no-doc { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 18px; margin-bottom: 18px; border: 1px solid var(--accent-line); background: var(--accent-soft); border-radius: 14px; }
+.no-doc[hidden] { display: none; }
+.no-doc strong { font-size: 15px; }
+.no-doc span { color: var(--muted); font-size: 14px; }
+.no-doc .button { margin-top: 8px; }
+
+/* ── Answer ── */
+.answer { margin-top: 26px; padding: 4px 6px 0; }
+.answer[hidden] { display: none; }
+.answer-head { display: flex; align-items: center; gap: 10px; }
+.answer-head h2 { margin: 0; font-size: 18px; }
+#answerIconSlot { display: grid; place-items: center; color: var(--lav); }
+#answerIconSlot svg { width: 20px; height: 20px; }
+.answer-question { margin: 12px 0 0; color: var(--faint); font-size: 13px; }
+.answer-question:empty { display: none; }
+.answer-body { margin-top: 12px; font-size: 17px; line-height: 1.7; color: var(--text); max-width: 68ch; }
+.answer-body p { margin: 0 0 .75em; }
+.answer-body ul { margin: 0 0 .75em; padding-left: 1.2em; }
+.answer-body li { margin-bottom: .3em; }
+.answer-body:empty { display: none; }
+.cite { display: inline-block; padding: 1px 9px; margin: 0 2px; border-radius: 999px; background: var(--accent-soft); color: var(--lav-text); font-size: 12px; font-weight: 600; vertical-align: 1px; white-space: nowrap; }
+.answer .source-row { margin-top: 14px; }
+.answer .source-row:empty { display: none; }
+
+.sources { margin-top: 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-2); }
+.sources[hidden] { display: none; }
+.sources summary { padding: 11px 14px; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; }
+.sources[open] summary { border-bottom: 1px solid var(--border); }
+.source-item { padding: 12px 14px; }
+.source-item + .source-item { border-top: 1px solid var(--border); }
+.source-item p { margin: 8px 0 0; color: var(--pre-text); font-size: 13px; line-height: 1.7; }
+
+.answer-meta { display: flex; align-items: center; gap: 6px; margin: 14px 0 0; color: var(--faint); font-size: 12px; }
+.answer-meta:empty { display: none; }
+.answer-meta svg { width: 14px; height: 14px; color: var(--green); }
+
+.answer.is-loading #answerIconSlot svg { animation: ask-spin .9s linear infinite; }
+.answer.is-loading .answer-body { color: var(--muted); }
+.answer.is-error #answerIconSlot { color: var(--coral); }
+.answer.is-error .answer-body { padding: 14px 16px; border-radius: 12px; background: var(--coral-bg); font-size: 15px; max-width: none; }
+@keyframes ask-spin { to { transform: rotate(360deg); } }
+
+/* ── History (saved for revision) ── */
+.history { margin-top: 34px; padding-top: 20px; border-top: 1px solid var(--border); }
+.history[hidden] { display: none; }
+.history-head { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+.history-head h2 { font-size: 17px; margin: 0; }
+.history-head span { color: var(--faint); font-size: 12px; }
+.history-list { list-style: none; margin: 0; padding: 0; }
+.history-item { display: flex; align-items: center; gap: 14px; width: 100%; padding: 12px 8px; border: 0; border-top: 1px solid var(--border); border-radius: 0; background: transparent; color: var(--text); text-align: left; transition: background-color .2s; }
+.history-list li:first-child .history-item { border-top: 0; }
+.history-item:hover { background: var(--surface-2); }
+.history-q { flex: 1; min-width: 0; font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.history-meta { color: var(--faint); font-size: 12px; white-space: nowrap; }
+
+@media (max-width: 680px) {
+  .doc-chip { max-width: 45%; }
+  .ask-hint { display: none; }
+  .history-meta { display: none; }
+}

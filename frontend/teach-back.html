@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teach It Back · AskBoard</title>
+
+  <script>
+    (function () {
+      let theme = null;
+      try { theme = localStorage.getItem("askboard-theme"); } catch {}
+      if (theme !== "light" && theme !== "dark") {
+        theme = window.matchMedia("(prefers-color-scheme: light)").matches
+          ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css?v=3">
+  <link rel="stylesheet" href="css/teach.css?v=1">
+  <link rel="stylesheet" href="css/teach-back.css?v=4">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- MediaPipe Hands -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"
+          crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <div class="ambient" aria-hidden="true">
+    <span class="orb orb-a"></span>
+    <span class="orb orb-b"></span>
+    <span class="orb orb-c"></span>
+  </div>
+
+  <header class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a class="brand" href="index.html" aria-label="AskBoard home">
+        <span class="brand-mark"><i data-lucide="sparkles"></i></span>
+        <span>askboard</span>
+      </a>
+
+      <nav class="main-nav" id="mainNav" aria-label="Main navigation">
+        <a class="nav-item" href="index.html"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
+        <a class="nav-item active" href="teach.html" aria-current="page"><i data-lucide="book-open"></i><span>Study</span></a>
+        <a class="nav-item" href="revision.html"><i data-lucide="rotate-ccw"></i><span>Revision</span></a>
+        <button class="nav-item" data-view="Summarize"><i data-lucide="wand-sparkles"></i><span>Summarize</span><span class="ai-pill">AI</span></button>
+        <a class="nav-item" href="reports.html"><i data-lucide="chart-no-axes-combined"></i><span>Reports</span></a>
+      </nav>
+
+      <div class="navbar-actions">
+        <!-- Shows whether the camera is running, from any part of the page -->
+        <span class="cam-pill" id="camPill" role="status">
+          <i class="cam-dot"></i><span id="camPillText">Camera off</span>
+        </span>
+        <button class="icon-button" id="searchFocus" aria-label="Go to Start camera"><i data-lucide="camera"></i></button>
+        <button class="icon-button" data-view="Settings" aria-label="Settings"><i data-lucide="settings"></i></button>
+
+<button class="icon-button" id="themeToggle"
+        aria-label="Switch theme" title="Switch theme">
+  <span class="theme-icon icon-sun">
+    <i data-lucide="sun"></i>
+  </span>
+  <span class="theme-icon icon-moon">
+    <i data-lucide="moon"></i>
+  </span>
+</button>
+
+        <button class="topbar-avatar" id="avatarButton" aria-label="Profile"><i data-lucide="user"></i></button>
+        <button class="icon-button mobile-menu" id="menuToggle" aria-label="Open menu" aria-expanded="false"><i data-lucide="menu"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-content teach-page tb-page" id="top">
+
+    <!-- Compact heading + gesture guide -->
+    <header class="tb-top">
+      <div class="tb-heading">
+        <a class="back-link" href="teach.html"><i data-lucide="arrow-left"></i> Back to Teach Me</a>
+        <div class="tb-title">
+          <h1>Teach It Back.</h1>
+          <p class="teach-sub">Explain a topic out loud and make a V sign for a hint from your notes.</p>
+        </div>
+      </div>
+
+      <div class="tb-guide" aria-label="Gesture guide">
+        <span class="gesture-chip"><span class="mini-v" aria-hidden="true"><i></i><i></i></span><b>V sign</b> hint</span>
+        <span class="gesture-chip"><i data-lucide="hand"></i><b>Open palm</b> end &amp; save</span>
+        <details class="tb-help">
+          <summary><i data-lucide="info"></i> Tips</summary>
+          <ul class="tb-help-pop">
+            <li><i data-lucide="sun"></i><span>Face a window or lamp so your hand is well lit.</span></li>
+            <li><i data-lucide="hand"></i><span>Keep one hand fully inside the frame.</span></li>
+            <li><i data-lucide="ruler"></i><span>Sit about an arm’s length from the camera.</span></li>
+            <li><i data-lucide="shield-check"></i><span>Video stays in your browser and is never uploaded.</span></li>
+          </ul>
+        </details>
+      </div>
+    </header>
+
+    <!-- Topic and timer on one compact bar -->
+    <section class="tb-topic panel" aria-labelledby="topicTitle">
+      <h2 id="topicTitle" class="sr-only">Choose your topic</h2>
+      <div class="tb-topic-row">
+        <div class="tb-field">
+          <i data-lucide="book-open"></i>
+          <label for="topicInput" class="sr-only">Name the topic from your PDF</label>
+          <input id="topicInput" type="text" maxlength="200" placeholder="Name a topic from your PDF, e.g. The Krebs cycle">
+        </div>
+        <button id="chooseTopic" class="button" type="button"><i data-lucide="sparkles"></i> Let AI choose a topic</button>
+
+        <div class="tb-timer">
+          <span class="timer-label"><i data-lucide="timer"></i> Timer</span>
+          <div class="timer-options" role="group" aria-label="Timer duration">
+            <button class="timer-choice is-selected" data-minutes="2" type="button">2 min</button>
+            <button class="timer-choice" data-minutes="5" type="button">5 min</button>
+            <button class="timer-choice" data-minutes="7" type="button">7 min</button>
+          </div>
+          <strong id="timerDisplay">02:00</strong>
+          <button id="timerStart" class="button button-primary" type="button"><i data-lucide="play"></i> Start timer</button>
+          <button id="timerReset" class="button" type="button">Reset</button>
+        </div>
+      </div>
+      <div class="tb-topic-meta">
+        <span class="tb-topic-doc" id="topicDocument">No document selected</span>
+        <p id="topicStatus" class="topic-status" role="status"></p>
+      </div>
+    </section>
+
+    <!-- Camera on the left; teach-back.js adds the live transcript + hint panel right after it -->
+    <div class="tb-workspace">
+      <section class="panel tb-camera">
+        <div class="tb-bar">
+          <div class="tb-bar-text">
+            <h2>Hand tracking</h2>
+            <p id="cameraStatus" role="status">Camera is off</p>
+          </div>
+          <div class="tb-actions">
+            <button id="startCamera" class="button button-primary" type="button">Start camera</button>
+            <button id="stopCamera" class="button" type="button" disabled>Stop camera</button>
+            <button id="focusToggle" class="button" type="button" aria-pressed="false" title="Fill the screen with the camera and transcript (Esc to exit)"><i data-lucide="maximize-2"></i><span>Focus view</span></button>
+          </div>
+        </div>
+
+        <div id="cameraStage" class="camera-stage">
+          <video id="cameraVideo" class="camera-video" autoplay playsinline muted></video>
+          <canvas id="trackingCanvas" class="camera-canvas"></canvas>
+          <div id="cameraPlaceholder" class="camera-placeholder">
+            <div class="ph">
+              <i data-lucide="camera"></i>
+              <p>Start your camera to detect your hand.</p>
+              <ul>
+                <li><span class="mini-v" aria-hidden="true"><i></i><i></i></span> Hold a V for a hint</li>
+                <li><i data-lucide="hand"></i> Hold an open palm to end and save</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <p id="handStatus" class="hand-status" role="status">Hand tracking hasn't started.</p>
+      </section>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="js/page-shell.js?v=2"></script>
+  <script src="js/teach-back.js?v=2"></script>
+</body>
+</html>

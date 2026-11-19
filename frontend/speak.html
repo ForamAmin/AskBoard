@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Ask your PDF a question out loud and hear the answer back.">
+  <title>Talk to your notes · AskBoard</title>
+
+  <!-- Apply the saved (or system) theme before first paint to avoid a flash -->
+  <script>
+    (function () {
+      var theme = null;
+      try { theme = localStorage.getItem("askboard-theme"); } catch (e) {}
+      if (theme !== "light" && theme !== "dark") {
+        theme = window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css?v=3">
+  <link rel="stylesheet" href="css/ask.css?v=1">
+  <link rel="stylesheet" href="css/speak.css?v=1">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <header class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a class="brand" href="index.html" aria-label="AskBoard home">
+        <span class="brand-mark"><i data-lucide="sparkles"></i></span>
+        <span>askboard</span>
+      </a>
+
+      <nav class="main-nav" id="mainNav" aria-label="Main navigation">
+        <a class="nav-item" href="index.html"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
+        <button class="nav-item" data-view="Study"><i data-lucide="book-open"></i><span>Study</span><span class="nav-badge">3</span></button>
+        <button class="nav-item" data-view="Revision"><i data-lucide="rotate-ccw"></i><span>Revision</span></button>
+        <button class="nav-item" data-view="Summarize"><i data-lucide="wand-sparkles"></i><span>Summarize</span><span class="ai-pill">AI</span></button>
+        <button class="nav-item" data-view="Reports"><i data-lucide="chart-no-axes-combined"></i><span>Reports</span></button>
+      </nav>
+
+      <div class="navbar-actions">
+        <button class="icon-button" id="searchFocus" aria-label="Start speaking"><i data-lucide="search"></i></button>
+        <button class="icon-button" data-view="Settings" aria-label="Settings"><i data-lucide="settings"></i></button>
+
+<button class="icon-button" id="themeToggle"
+        aria-label="Switch theme" title="Switch theme">
+  <span class="theme-icon icon-sun">
+    <i data-lucide="sun"></i>
+  </span>
+  <span class="theme-icon icon-moon">
+    <i data-lucide="moon"></i>
+  </span>
+</button>
+
+        <button class="icon-button notification-button" aria-label="Notifications"><i data-lucide="bell"></i><span></span></button>
+        <button class="topbar-avatar" aria-label="Profile">AR</button>
+        <button class="icon-button mobile-menu" id="menuToggle" aria-label="Open menu" aria-expanded="false"><i data-lucide="menu"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-content ask-page speak-page" id="top">
+    <section class="panel ask-card">
+      <div class="ask-topbar">
+        <a class="back-link" href="index.html"><i data-lucide="arrow-left"></i> Back to Dashboard</a>
+        <span class="status-tag is-live">Voice study</span>
+      </div>
+
+      <div class="voice-stage">
+        <div class="orb" id="orb" aria-hidden="true"><i data-lucide="mic"></i></div>
+        <h1>Talk to your notes</h1>
+        <p class="voice-lead">Ask a question out loud. AskBoard will find the answer in your PDF.</p>
+
+        <button class="voice-button" id="micButton" type="button" disabled>
+          <i data-lucide="mic"></i><span>Start speaking</span>
+        </button>
+        <p class="voice-status" id="voiceStatus" role="status" aria-live="polite"></p>
+        <a class="voice-alt" href="ask.html">Prefer typing? Open Ask</a>
+      </div>
+
+      <div class="no-doc" id="noDoc" hidden>
+        <strong>No document selected</strong>
+        <span>Upload a PDF on the dashboard first, then choose Speak.</span>
+        <a class="button button-primary" href="index.html"><i data-lucide="upload-cloud"></i> Go to upload</a>
+      </div>
+
+      <section class="voice-result" id="result" hidden>
+        <div class="said">
+          <p class="eyebrow">You said</p>
+          <p class="said-text" id="saidText"></p>
+        </div>
+
+        <section class="answer" id="answerCard" aria-live="polite" hidden>
+          <div class="answer-head">
+            <span id="answerIconSlot"></span>
+            <h2 id="answerTitle">AskBoard’s answer</h2>
+          </div>
+          <div class="answer-body" id="answerBody"></div>
+          <div class="source-row" id="answerPages"></div>
+          <details class="sources" id="answerSources" hidden>
+            <summary>View source passages</summary>
+            <div id="answerSourceList"></div>
+          </details>
+          <p class="answer-meta" id="answerMeta"></p>
+          <div class="play-row" id="playRow" hidden>
+            <button class="play-button" id="playButton" type="button">
+              <i data-lucide="volume-2"></i><span>Play answer</span>
+            </button>
+          </div>
+        </section>
+      </section>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="js/speak.js?v=1"></script>
+</body>
+</html>

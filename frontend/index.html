@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AskBoard — turn any PDF into a study partner that answers from your own notes.">
+  <title>AskBoard · Study smarter</title>
+
+  <!-- Apply the saved (or system) theme before first paint to avoid a flash -->
+  <script>
+    (function () {
+      var theme = null;
+      try { theme = localStorage.getItem("askboard-theme"); } catch (e) {}
+      if (theme !== "light" && theme !== "dark") {
+        theme = window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", theme);
+      // Lets the stylesheet hide scroll-reveal items only when JavaScript is running.
+      document.documentElement.classList.add("has-js");
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css?v=3">
+  <link rel="stylesheet" href="css/home.css?v=1">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <!-- Slow drifting colour behind the page -->
+  <div class="ambient" aria-hidden="true">
+    <span class="orb orb-a"></span>
+    <span class="orb orb-b"></span>
+    <span class="orb orb-c"></span>
+  </div>
+
+  <header class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a class="brand" href="#top" aria-label="AskBoard home">
+        <span class="brand-mark"><i data-lucide="sparkles"></i></span>
+        <span>askboard</span>
+      </a>
+
+      <nav class="main-nav" id="mainNav" aria-label="Main navigation">
+        <a class="nav-item active" href="index.html" aria-current="page"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
+        <a class="nav-item" href="teach.html"><i data-lucide="book-open"></i><span>Study</span></a>
+        <a class="nav-item" href="revision.html"><i data-lucide="rotate-ccw"></i><span>Revision</span></a>
+        <button class="nav-item" data-view="Summarize"><i data-lucide="wand-sparkles"></i><span>Summarize</span><span class="ai-pill">AI</span></button>
+        <a class="nav-item" href="reports.html"><i data-lucide="chart-no-axes-combined"></i><span>Reports</span></a>
+      </nav>
+
+      <div class="navbar-actions">
+        <button class="icon-button" id="searchFocus" aria-label="Search documents"><i data-lucide="search"></i></button>
+        <button class="icon-button" data-view="Settings" aria-label="Settings"><i data-lucide="settings"></i></button>
+
+<button class="icon-button" id="themeToggle"
+        aria-label="Switch theme" title="Switch theme">
+  <span class="theme-icon icon-sun">
+    <i data-lucide="sun"></i>
+  </span>
+  <span class="theme-icon icon-moon">
+    <i data-lucide="moon"></i>
+  </span>
+</button>
+
+        <button class="icon-button" id="notifyButton" aria-label="Notifications"><i data-lucide="bell"></i></button>
+        <button class="topbar-avatar" id="avatarButton" aria-label="Set your name" title="Set your name"><i data-lucide="user"></i></button>
+        <button class="icon-button mobile-menu" id="menuToggle" aria-label="Open menu" aria-expanded="false"><i data-lucide="menu"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-content" id="top">
+    <!-- 1. What AskBoard is -->
+    <section class="hero">
+      <div class="hero-copy reveal">
+        <span class="pill"><i data-lucide="sparkles"></i> AI study assistant</span>
+        <h1>
+          <span class="hero-brand">AskBoard</span>
+          <span class="hero-tag">Turn any PDF into a study partner that answers from your own notes.</span>
+        </h1>
+        <p class="hero-sub">Upload your notes, ask by typing or speaking, and draw a circle in front of your webcam when you’re stuck. Every answer points back to the page it came from.</p>
+        <div class="hero-actions">
+          <button class="button button-primary button-large" data-upload type="button"><i data-lucide="upload-cloud"></i><strong>Upload notes</strong></button>
+          <a class="button button-ghost button-large" href="#how">See how it works <i data-lucide="arrow-right"></i></a>
+        </div>
+        <ul class="hero-points">
+          <li><i data-lucide="file-text"></i> Answers with page references</li>
+          <li><i data-lucide="mic"></i> Ask by voice</li>
+          <li><i data-lucide="hand"></i> Circle for a hint</li>
+        </ul>
+      </div>
+
+      <div class="preview" id="heroPreview" aria-label="Your latest answer">
+        <div class="preview-bar">
+          <span class="preview-dots"><i></i><i></i><i></i></span>
+          <span class="preview-label" id="previewLabel">Latest answer</span>
+        </div>
+        <div id="previewBody">
+          <div class="preview-empty">
+            <span class="preview-empty-icon"><i data-lucide="message-square-text"></i></span>
+            <strong>Your latest answer will appear here</strong>
+            <span>Upload a PDF, then ask by typing or speaking.</span>
+          </div>
+        </div>
+        <div class="hint-card">
+          <span class="hint-icon"><i data-lucide="hand"></i></span>
+          <div><strong>Stuck? Draw a V Shape</strong><span>Gesture a V shape at the webcam for a one-line hint, not the full answer.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Upload feedback (shown after choosing a PDF) -->
+    <section class="extract-result panel" id="extractResult" aria-live="polite" hidden>
+      <div class="extract-result-header">
+        <div class="extract-file-icon"><i data-lucide="file-check-2"></i></div>
+        <div class="extract-file-info"><p class="eyebrow">Extraction complete</p><h2 id="extractFilename"></h2><span id="extractMeta"></span></div>
+        <button class="icon-button" id="dismissExtract" type="button" aria-label="Dismiss extraction result"><i data-lucide="x"></i></button>
+      </div>
+      <div class="extract-next" role="group" aria-label="Choose how to study this document"
+           style="display:flex;flex-wrap:wrap;gap:12px;margin:4px 0 18px;">
+        <a class="button button-large" href="ask.html"
+           style="background:#aa93f5;color:#1b1432;border-color:transparent;box-shadow:0 0 16px rgba(170,147,245,.55),0 0 40px rgba(170,147,245,.28);">
+          <i data-lucide="message-square-text"></i><strong>Ask</strong>
+        </a>
+        <a class="button button-large" href="speak.html"
+           style="background:#aa93f5;color:#1b1432;border-color:transparent;box-shadow:0 0 16px rgba(170,147,245,.55),0 0 40px rgba(170,147,245,.28);">
+          <i data-lucide="mic"></i><strong>Speak</strong>
+        </a>
+        <a class="button button-large" href="teach.html"
+           style="background:#aa93f5;color:#1b1432;border-color:transparent;box-shadow:0 0 16px rgba(170,147,245,.55),0 0 40px rgba(170,147,245,.28);">
+          <i data-lucide="graduation-cap"></i><strong>Teach Me</strong>
+        </a>
+      </div>
+      <div class="extract-preview">
+        <div class="preview-heading"><span>Extracted text preview</span><span id="extractCharacterCount"></span></div>
+        <pre id="extractText"></pre>
+      </div>
+    </section>
+
+    <!-- 2. How it works -->
+    <section class="how" id="how">
+      <div class="section-head reveal"><p class="eyebrow">How it works</p><h2>From notes to answers in three steps</h2></div>
+      <div class="steps">
+        <article class="step reveal" style="--d:.05s">
+          <span class="step-num">1</span>
+          <span class="step-icon"><i data-lucide="upload-cloud"></i></span>
+          <h3>Upload your notes</h3>
+          <p>Drop in a PDF up to 15 MB. AskBoard splits it into searchable pieces and remembers which page each came from.</p>
+          <span class="status-tag is-live">Ready</span>
+        </article>
+        <article class="step reveal" style="--d:.15s">
+          <span class="step-num">2</span>
+          <span class="step-icon"><i data-lucide="mic"></i></span>
+          <h3>Ask by typing or speaking</h3>
+          <p>Questions are answered only from your document, with the page numbers shown next to every answer.</p>
+          <span class="status-tag is-live">Ready</span>
+        </article>
+        <article class="step reveal" style="--d:.25s">
+          <span class="step-num">3</span>
+          <span class="step-icon"><i data-lucide="hand"></i></span>
+          <h3>Circle when you’re stuck</h3>
+          <p>Draw a circle with your finger in front of the webcam and get a short hint from your own notes.</p>
+          <span class="status-tag">Preview</span>
+        </article>
+      </div>
+    </section>
+
+    <!-- 3. Dashboard (all numbers come from your own activity) -->
+    <section class="overview">
+      <div class="section-head section-head-row reveal">
+        <div>
+          <p class="eyebrow"><span class="status-dot"></span><span id="todayDate">Today</span></p>
+          <h2><span id="greeting">Welcome back</span><span id="greetingName"></span> <span class="wave">✦</span></h2>
+        </div>
+        <div class="head-actions">
+          <a class="button button-primary" id="headAsk" href="ask.html" hidden><i data-lucide="message-square-text"></i> Ask a question</a>
+          <button class="button button-primary" id="headUpload" data-upload type="button"><i data-lucide="upload-cloud"></i><strong>Upload notes</strong></button>
+        </div>
+      </div>
+
+      <section class="stats-grid" aria-label="Study overview">
+        <article class="stat-card accent-card reveal" style="--d:.05s">
+          <div class="stat-icon"><i data-lucide="flame"></i></div>
+          <div class="stat-label">Study streak</div>
+          <div class="stat-value"><span data-count id="statStreak">0</span> <small id="statStreakUnit">days</small></div>
+          <div class="stat-foot" id="statStreakFoot"></div>
+        </article>
+        <article class="stat-card reveal" style="--d:.12s">
+          <div class="stat-icon muted-icon"><i data-lucide="messages-square"></i></div>
+          <div class="stat-label">Questions asked</div>
+          <div class="stat-value"><span data-count id="statQuestions">0</span> <small>in total</small></div>
+          <div class="stat-foot" id="statQuestionsFoot"></div>
+        </article>
+        <article class="stat-card reveal" style="--d:.19s">
+          <div class="stat-icon muted-icon"><i data-lucide="library"></i></div>
+          <div class="stat-label">Documents</div>
+          <div class="stat-value"><span data-count id="statDocuments">0</span> <small>in your library</small></div>
+          <div class="stat-foot" id="statDocumentsFoot"></div>
+        </article>
+        <article class="stat-card reveal" style="--d:.26s">
+          <div class="stat-icon muted-icon"><i data-lucide="book-check"></i></div>
+          <div class="stat-label">Pages covered</div>
+          <div class="stat-value"><span data-count id="statCovered">0</span> <small id="statCoveredOf">of 0 pages</small></div>
+          <div class="stat-foot progress-foot" id="statCoveredFoot"></div>
+        </article>
+      </section>
+
+      <div class="dashboard-grid">
+        <section class="panel activity-panel reveal">
+          <div class="panel-heading">
+            <div><p class="eyebrow">Your progress</p><h2>Study activity</h2></div>
+            <button class="select-button" id="rangeToggle" type="button" aria-label="Change time range"><span id="rangeLabel">Last 7 days</span> <i data-lucide="chevron-down"></i></button>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-y-axis" id="chartY"></div>
+            <div class="chart" id="chart">
+              <div class="chart-grid"><i></i><i></i><i></i><i></i><i></i></div>
+              <svg id="chartSvg" preserveAspectRatio="none" role="img" aria-label="Questions asked per day">
+                <defs>
+                  <linearGradient id="chartFill" x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0" stop-color="#aa93f5" stop-opacity=".28"/>
+                    <stop offset="1" stop-color="#aa93f5" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <path class="chart-area" id="chartArea" d=""/>
+                <path class="chart-line" id="chartLine" d=""/>
+                <g id="chartDots"></g>
+              </svg>
+              <p class="chart-empty" id="chartEmpty" hidden>Ask a question to see your activity here.</p>
+              <div class="chart-x-axis" id="chartX"></div>
+            </div>
+          </div>
+          <p class="chart-caption" id="chartCaption"></p>
+        </section>
+
+        <section class="panel focus-panel reveal" style="--d:.1s">
+          <div class="panel-heading">
+            <div><p class="eyebrow">Up next</p><h2>Continue studying</h2></div>
+          </div>
+          <div id="focusBody"></div>
+          <a class="next-item" id="reviseLink" href="revision.html">
+            <div class="next-icon"><i data-lucide="rotate-ccw"></i></div>
+            <div><strong>Revise saved answers</strong><span id="reviseText">Nothing saved yet</span></div>
+            <i data-lucide="chevron-right"></i>
+          </a>
+        </section>
+      </div>
+
+      <section class="panel documents-panel reveal">
+        <div class="panel-heading documents-heading">
+          <div><p class="eyebrow">Your library</p><h2>Recent documents</h2></div>
+          <div class="document-actions">
+            <label class="search-box">
+              <i data-lucide="search"></i>
+              <input id="documentSearch" type="search" placeholder="Search documents..." aria-label="Search documents">
+            </label>
+          </div>
+        </div>
+        <div class="documents-list" id="documentsList"></div>
+        <div class="documents-empty" id="documentsEmpty">
+          <strong>No documents yet</strong>
+          <span>Upload a PDF and it will show up here.</span>
+        </div>
+      </section>
+
+      <section class="quick-actions">
+        <div class="section-head reveal"><p class="eyebrow">Make progress</p><h2>Quick actions</h2></div>
+        <div class="action-cards">
+          <button class="action-card reveal" id="uploadDocumentButton" data-upload type="button" style="--d:.04s">
+            <span class="action-card-icon mint"><i data-lucide="upload-cloud"></i></span>
+            <span><strong>Upload notes</strong><small>PDF files up to 15 MB</small></span>
+            <i data-lucide="arrow-up-right"></i>
+          </button>
+          <a class="action-card reveal" href="ask.html" style="--d:.1s">
+            <span class="action-card-icon lavender"><i data-lucide="message-square-text"></i></span>
+            <span><strong>Ask a question</strong><small id="askSub">Type a question</small></span>
+            <i data-lucide="arrow-up-right"></i>
+          </a>
+          <a class="action-card reveal" href="speak.html" style="--d:.16s">
+            <span class="action-card-icon coral"><i data-lucide="mic"></i></span>
+            <span><strong>Speak to your notes</strong><small id="speakSub">Ask out loud</small></span>
+            <i data-lucide="arrow-up-right"></i>
+          </a>
+          <a class="action-card reveal" href="teach.html" style="--d:.22s">
+            <span class="action-card-icon lavender"><i data-lucide="graduation-cap"></i></span>
+            <span><strong>Teach Me</strong><small id="teachSub">Quiz, teach back, explain</small></span>
+            <i data-lucide="arrow-up-right"></i>
+          </a>
+        </div>
+        <input id="pdfFileInput" type="file" accept=".pdf,application/pdf" hidden>
+      </section>
+    </section>
+
+    <footer class="footer">
+      <span>AskBoard <span class="footer-dot">·</span> Learn with intention.</span>
+      <span><i data-lucide="lock-keyhole"></i> Answers come only from your own notes</span>
+    </footer>
+  </main>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="js/api.js?v=4"></script>
+  <script src="js/camera.js?v=4"></script>
+  <script src="js/app.js?v=5"></script>
+  <script src="js/home.js?v=1"></script>
+</body>
+</html>

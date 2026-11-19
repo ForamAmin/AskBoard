@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Your study progress, writing analysis and ideas, built from your own AskBoard activity.">
+  <title>Reports · AskBoard</title>
+
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem("askboard-theme"); } catch (e) {}
+      if (t !== "light" && t !== "dark") {
+        t = window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+      document.documentElement.classList.add("has-js");
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css?v=3">
+  <link rel="stylesheet" href="css/reports.css?v=2">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="ambient" aria-hidden="true">
+    <span class="orb orb-a"></span><span class="orb orb-b"></span><span class="orb orb-c"></span>
+  </div>
+
+  <header class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a class="brand" href="index.html" aria-label="AskBoard home">
+        <span class="brand-mark"><i data-lucide="sparkles"></i></span><span>askboard</span>
+      </a>
+      <nav class="main-nav" id="mainNav" aria-label="Main navigation">
+        <a class="nav-item" href="index.html"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
+        <a class="nav-item" href="teach.html"><i data-lucide="book-open"></i><span>Study</span></a>
+        <a class="nav-item" href="revision.html"><i data-lucide="rotate-ccw"></i><span>Revision</span></a>
+        <button class="nav-item" data-view="Summarize"><i data-lucide="wand-sparkles"></i><span>Summarize</span><span class="ai-pill">AI</span></button>
+        <a class="nav-item active" href="reports.html" aria-current="page"><i data-lucide="chart-no-axes-combined"></i><span>Reports</span></a>
+      </nav>
+      <div class="navbar-actions">
+        <button class="icon-button" id="themeToggle" aria-label="Switch theme" title="Switch theme">
+          <span class="theme-icon icon-sun"><i data-lucide="sun"></i></span>
+          <span class="theme-icon icon-moon"><i data-lucide="moon"></i></span>
+        </button>
+        <button class="topbar-avatar" id="avatarButton" aria-label="Profile"><i data-lucide="user"></i></button>
+        <button class="icon-button mobile-menu" id="menuToggle" aria-label="Open menu" aria-expanded="false"><i data-lucide="menu"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-content reports-page" id="top">
+    <section class="reports-head reveal">
+      <div>
+        <p class="eyebrow">Your learning data</p>
+        <h1>Reports.</h1>
+        <p class="lead">See how your study habits, progress and writing change over time.</p>
+      </div>
+      <label class="doc-filter">
+        <i data-lucide="file-text"></i>
+        <select id="docFilter" aria-label="Show data for"><option value="all">All documents</option></select>
+      </label>
+    </section>
+
+    <div class="notice" id="notice" hidden></div>
+
+    <!-- Ideas and thoughts: change every 3 minutes -->
+    <section class="insights reveal" aria-label="Ideas and thoughts">
+      <article class="insight insight-idea" id="ideaCard">
+        <div class="insight-top">
+          <span class="insight-tag"><i data-lucide="lightbulb"></i> Idea</span>
+          <span class="insight-count" id="ideaCount"></span>
+        </div>
+        <div class="insight-body">
+          <h3 id="ideaTitle"></h3>
+          <p id="ideaText"></p>
+          <a class="insight-cta" id="ideaCta" href="#" hidden></a>
+        </div>
+      </article>
+      <article class="insight insight-thought" id="thoughtCard">
+        <div class="insight-top">
+          <span class="insight-tag"><i data-lucide="brain"></i> Thought</span>
+          <span class="insight-count" id="thoughtCount"></span>
+        </div>
+        <div class="insight-body">
+          <h3 id="thoughtTitle"></h3>
+          <p id="thoughtText"></p>
+          <a class="insight-cta" id="thoughtCta" href="#" hidden></a>
+        </div>
+      </article>
+      <div class="insight-foot">
+        <div class="insight-timer" aria-hidden="true"><i id="timerFill"></i></div>
+        <span class="insight-note">New ideas and thoughts in <b id="timerText">3:00</b></span>
+        <button class="text-button" id="nextInsight" type="button">Next <i data-lucide="arrow-right"></i></button>
+      </div>
+    </section>
+
+    <!-- Headline numbers -->
+    <section class="stats-grid report-stats" aria-label="Headline numbers">
+      <article class="stat-card accent-card reveal" style="--d:.04s">
+        <div class="stat-icon"><i data-lucide="messages-square"></i></div>
+        <div class="stat-label">Questions asked</div>
+        <div class="stat-value"><span data-count id="statQuestions">0</span></div>
+        <div class="stat-foot" id="statQuestionsFoot"></div>
+      </article>
+      <article class="stat-card reveal" style="--d:.1s">
+        <div class="stat-icon muted-icon"><i data-lucide="whole-word"></i></div>
+        <div class="stat-label">Words written and spoken</div>
+        <div class="stat-value"><span data-count id="statWords">0</span></div>
+        <div class="stat-foot" id="statWordsFoot"></div>
+      </article>
+      <article class="stat-card reveal" style="--d:.16s">
+        <div class="stat-icon muted-icon"><i data-lucide="spell-check"></i></div>
+        <div class="stat-label">Writing score</div>
+        <div class="stat-value"><span data-count id="statGrammar">0</span> <small>/ 100</small></div>
+        <div class="stat-foot" id="statGrammarFoot"></div>
+      </article>
+      <article class="stat-card reveal" style="--d:.22s">
+        <div class="stat-icon muted-icon"><i data-lucide="flame"></i></div>
+        <div class="stat-label">Study streak</div>
+        <div class="stat-value"><span data-count id="statStreak">0</span> <small id="statStreakUnit">days</small></div>
+        <div class="stat-foot" id="statStreakFoot"></div>
+      </article>
+    </section>
+
+    <!-- Activity -->
+    <div class="grid-2">
+      <section class="panel report-panel reveal">
+        <div class="panel-heading">
+          <div><p class="eyebrow">Activity</p><h2>Questions and sessions over time</h2></div>
+          <button class="select-button" id="rangeToggle" type="button" aria-label="Change time range"><span id="rangeLabel">Last 7 days</span> <i data-lucide="chevron-down"></i></button>
+        </div>
+        <div class="bars" id="bars"></div>
+        <div class="legend">
+          <span><i class="dot dot-typed"></i>Typed</span>
+          <span><i class="dot dot-spoken"></i>Spoken</span>
+          <span><i class="dot dot-teach"></i>Teach It Back</span>
+        </div>
+        <p class="caption" id="activityCaption"></p>
+      </section>
+
+      <section class="panel report-panel reveal" style="--d:.1s">
+        <div class="panel-heading"><div><p class="eyebrow">Mix</p><h2>How you study</h2></div></div>
+        <div class="donut-wrap">
+          <div class="donut" id="donut"></div>
+          <ul class="donut-legend" id="donutLegend"></ul>
+        </div>
+      </section>
+    </div>
+
+    <!-- Progress tracker -->
+    <div class="section-head reveal"><p class="eyebrow">Progress tracker</p><h2>Where you are, in detail</h2></div>
+
+    <div class="grid-3">
+      <section class="panel report-panel reveal">
+        <div class="panel-heading"><div><p class="eyebrow">This week</p><h2>Weekly goal</h2></div></div>
+        <div class="goal">
+          <div class="ring" id="goalRing"></div>
+          <div class="goal-text">
+            <b id="goalValue">0 of 10</b>
+            <span id="goalText">questions this week</span>
+            <button class="text-button" id="goalEdit" type="button"><i data-lucide="pencil"></i> Change goal</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel report-panel reveal" style="--d:.08s">
+        <div class="panel-heading"><div><p class="eyebrow">Study rhythm</p><h2>When you study</h2></div></div>
+        <div class="rhythm" id="rhythm"></div>
+        <p class="caption" id="rhythmCaption"></p>
+      </section>
+
+      <section class="panel report-panel reveal" style="--d:.16s">
+        <div class="panel-heading"><div><p class="eyebrow">Milestones</p><h2>Achievements</h2></div><span class="status-tag" id="milestoneCount"></span></div>
+        <ul class="milestones" id="milestones"></ul>
+      </section>
+    </div>
+
+    <section class="panel report-panel reveal">
+      <div class="panel-heading"><div><p class="eyebrow">Documents</p><h2>Coverage by document</h2></div></div>
+      <div class="doc-progress" id="docProgress"></div>
+      <p class="empty" id="docEmpty" hidden>Upload a PDF and ask a question to see how much of it you have covered.</p>
+    </section>
+
+    <!-- Grammar -->
+    <div class="section-head reveal"><p class="eyebrow">Writing analysis</p><h2>Grammar, punctuation and style</h2></div>
+
+    <section class="panel report-panel empty-panel reveal" id="grammarEmpty" hidden>
+      <i data-lucide="spell-check"></i>
+      <h3>No writing to analyse yet</h3>
+      <p>Ask or speak a few questions, or finish a Teach It Back session, and a full breakdown appears here.</p>
+    </section>
+
+    <div id="grammarBody">
+      <div class="grid-3 grammar-top">
+        <section class="panel report-panel reveal">
+          <div class="panel-heading"><div><p class="eyebrow">Overall</p><h2>Writing score</h2></div></div>
+          <div class="score-ring">
+            <div class="ring ring-large" id="gRing"></div>
+            <div><b id="gLabel"></b><p id="gNote"></p></div>
+          </div>
+        </section>
+        <section class="panel report-panel reveal" style="--d:.08s">
+          <div class="panel-heading"><div><p class="eyebrow">Skills</p><h2>Skill shape</h2></div></div>
+          <div class="radar" id="radar"></div>
+        </section>
+        <section class="panel report-panel reveal" style="--d:.16s">
+          <div class="panel-heading"><div><p class="eyebrow">Trend</p><h2>Score over time</h2></div></div>
+          <div class="trend" id="trend"></div>
+          <p class="caption" id="trendCaption"></p>
+        </section>
+      </div>
+
+      <div class="category-cards" id="categoryCards"></div>
+
+      <div class="grid-2 grammar-mid">
+        <section class="panel report-panel reveal">
+          <div class="panel-heading"><div><p class="eyebrow">Punctuation</p><h2>Punctuation breakdown</h2></div></div>
+          <div id="punctTable"></div>
+        </section>
+        <section class="panel report-panel reveal" style="--d:.1s">
+          <div class="panel-heading"><div><p class="eyebrow">Issues</p><h2>What to work on</h2></div></div>
+          <div class="issue-bars" id="issueBars"></div>
+        </section>
+      </div>
+
+      <div class="grid-3">
+        <section class="panel report-panel reveal">
+          <div class="panel-heading"><div><p class="eyebrow">Sentences</p><h2>Sentence length</h2></div></div>
+          <div class="histogram" id="histogram"></div>
+          <p class="caption" id="sentenceCaption"></p>
+        </section>
+        <section class="panel report-panel reveal" style="--d:.08s">
+          <div class="panel-heading"><div><p class="eyebrow">Readability</p><h2>How easy it reads</h2></div></div>
+          <div id="readability"></div>
+        </section>
+        <section class="panel report-panel reveal" style="--d:.16s">
+          <div class="panel-heading"><div><p class="eyebrow">Vocabulary</p><h2>Words you lean on</h2></div></div>
+          <div id="wordsPanel"></div>
+        </section>
+      </div>
+
+      <section class="panel report-panel reveal">
+        <div class="panel-heading"><div><p class="eyebrow">Corrections</p><h2>Recent things to fix</h2></div></div>
+        <ul class="corrections" id="corrections"></ul>
+        <p class="empty" id="correctionsEmpty" hidden>Nothing to correct. Nice work.</p>
+      </section>
+
+      <p class="footnote">These checks are rule-based and run in your browser, so they catch common slips but not everything a human editor would. Voice questions and Teach It Back transcripts come from speech recognition, so capital letters and punctuation are not scored for them.</p>
+    </div>
+
+    <!-- Teach It Back -->
+    <div class="section-head reveal"><p class="eyebrow">Teach It Back</p><h2>Speaking sessions</h2></div>
+    <section class="stats-grid report-stats" id="tbStats"></section>
+    <div class="grid-2">
+      <section class="panel report-panel reveal">
+        <div class="panel-heading"><div><p class="eyebrow">History</p><h2>Session reports</h2></div></div>
+        <div id="sessionList" class="session-list"></div>
+      </section>
+      <section class="panel report-panel reveal" style="--d:.1s">
+        <div class="panel-heading"><div><p class="eyebrow">Communication</p><h2>Latest session</h2></div></div>
+        <div id="latest" class="latest empty">No Teach It Back sessions have been saved yet.</div>
+      </section>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="js/grammar.js?v=1"></script>
+  <script src="js/reports.js?v=2"></script>
+</body>
+</html>

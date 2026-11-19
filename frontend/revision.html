@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Revise your uploaded PDF with grounded notes, concepts, and flashcards.">
+  <title>Revision · AskBoard</title>
+  <script>(function(){var t=null;try{t=localStorage.getItem("askboard-theme")}catch(e){}if(t!=="light"&&t!=="dark")t=matchMedia&&matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";document.documentElement.setAttribute("data-theme",t)})();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="css/styles.css?v=3"><link rel="stylesheet" href="css/revision.css?v=1">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <header class="navbar" id="navbar"><div class="navbar-inner">
+    <a class="brand" href="index.html" aria-label="AskBoard home"><span class="brand-mark"><i data-lucide="sparkles"></i></span><span>askboard</span></a>
+    <nav class="main-nav" id="mainNav" aria-label="Main navigation">
+      <a class="nav-item" href="index.html"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
+      <a class="nav-item" href="teach.html"><i data-lucide="book-open"></i><span>Study</span><span class="nav-badge">3</span></a>
+      <a class="nav-item active" href="revision.html"><i data-lucide="rotate-ccw"></i><span>Revision</span></a>
+      <button class="nav-item" data-view="Summarize"><i data-lucide="wand-sparkles"></i><span>Summarize</span><span class="ai-pill">AI</span></button>
+      <button class="nav-item" data-view="Reports"><i data-lucide="chart-no-axes-combined"></i><span>Reports</span></button>
+    </nav>
+    <div class="navbar-actions"><button class="icon-button" id="searchFocus" aria-label="Go to revision modes"><i data-lucide="search"></i></button><button class="icon-button" data-view="Settings" aria-label="Settings"><i data-lucide="settings"></i></button><button class="icon-button" id="themeToggle" aria-label="Switch theme" title="Switch theme"><span class="theme-icon icon-sun"><i data-lucide="sun"></i></span><span class="theme-icon icon-moon"><i data-lucide="moon"></i></span></button><button class="icon-button notification-button" aria-label="Notifications"><i data-lucide="bell"></i><span></span></button><button class="topbar-avatar" aria-label="Profile">AR</button><button class="icon-button mobile-menu" id="menuToggle" aria-label="Open menu" aria-expanded="false"><i data-lucide="menu"></i></button></div>
+  </div></header>
+  <main class="page-content revision-page" id="top">
+    <section class="panel revision-card">
+      <div class="revision-topbar"><a class="back-link" href="teach.html"><i data-lucide="arrow-left"></i> Back to Teach Me</a><span class="doc-chip"><i data-lucide="file-text"></i><span id="docName">No document</span></span></div>
+      <header class="revision-head"><p class="eyebrow">Make it stick</p><h1>Revision.</h1><p>Turn your notes into a focused review session. Every generated answer is grounded in your selected PDF.</p></header>
+      <div class="no-doc" id="noDoc" hidden><i data-lucide="file-warning"></i><div><strong>No document selected</strong><span>Upload a PDF from the dashboard before starting revision.</span></div><a class="button button-primary" href="index.html"><i data-lucide="upload-cloud"></i> Go to dashboard</a></div>
+      <section class="revision-modes" id="revisionModes" aria-labelledby="modeTitle"><div class="section-label"><span class="modes-icon"><i data-lucide="brain"></i></span><div><h2 id="modeTitle">Choose a revision mode</h2><p>Generate a fresh review from this document.</p></div></div><div class="mode-grid">
+        <button class="revision-mode" data-mode="quick" type="button"><span class="mode-icon"><i data-lucide="zap"></i></span><span><strong>Quick Revision</strong><small>Concise notes covering the document’s main ideas.</small></span><i class="mode-arrow" data-lucide="arrow-up-right"></i></button>
+        <button class="revision-mode" data-mode="concepts" type="button"><span class="mode-icon"><i data-lucide="lightbulb"></i></span><span><strong>Key Concepts</strong><small>Important concepts with short, clear explanations.</small></span><i class="mode-arrow" data-lucide="arrow-up-right"></i></button>
+        <button class="revision-mode" data-mode="flashcards" type="button"><span class="mode-icon"><i data-lucide="layers-3"></i></span><span><strong>Flashcards</strong><small>Test yourself, then flip to reveal the answer.</small></span><i class="mode-arrow" data-lucide="arrow-up-right"></i></button>
+      </div></section>
+      <section class="result" id="result" hidden aria-live="polite"><div class="result-head"><div><p class="eyebrow" id="resultEyebrow">AI revision</p><h2 id="resultTitle"></h2></div><button class="text-button" id="clearResult" type="button">Clear</button></div><div class="status" id="status"></div><div class="result-body" id="resultBody"></div><div class="source-row" id="sourceRow"></div><div class="flash-controls" id="flashControls" hidden><button class="button" id="previousCard" type="button"><i data-lucide="chevron-left"></i> Previous</button><span id="flashProgress">1 / 1</span><button class="button" id="nextCard" type="button">Next <i data-lucide="chevron-right"></i></button><button class="button button-primary" id="shuffleCards" type="button"><i data-lucide="shuffle"></i> Shuffle</button></div></section>
+      <section class="history" id="history" hidden><div class="history-head"><div><p class="eyebrow">Saved from Ask</p><h2>Questions to revisit</h2></div><span id="historyCount"></span></div><div id="historyList"></div></section>
+    </section>
+  </main><div class="toast" id="toast" role="status"></div>
+  <script src="js/api.js?v=1"></script><script src="js/revision.js?v=1"></script>
+</body></html>

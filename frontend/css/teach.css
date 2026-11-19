@@ -1,0 +1,52 @@
+/* AskBoard — Teach Me landing page. Builds on css/styles.css (tokens, navbar, theme). */
+
+a.nav-item { text-decoration: none; }
+
+.page-content.teach-page { max-width: 760px; padding-top: clamp(24px, 4vw, 48px); }
+.teach-card { padding: clamp(20px, 3.5vw, 32px); border-radius: 20px; }
+
+.back-link { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 22px; color: var(--muted); text-decoration: none; font-size: 14px; transition: color .2s; }
+.back-link:hover { color: var(--text); }
+.back-link svg { width: 17px; height: 17px; }
+
+/* ── Heading ── */
+.teach-head .eyebrow { color: var(--lav-text); font-size: 13px; letter-spacing: .6px; }
+.teach-head h1 { margin: 10px 0 8px; font-size: clamp(28px, 4vw, 36px); letter-spacing: -1px; }
+.teach-sub { margin: 0 0 24px; color: var(--muted); font-size: 16px; line-height: 1.6; max-width: 52ch; }
+
+/* ── Learning modes ── */
+.modes { display: flex; flex-direction: column; gap: 10px; padding: 14px; border: 1px solid var(--accent-line); border-radius: 18px; background: var(--surface); }
+.modes-head { display: flex; align-items: center; gap: 14px; padding: 2px 4px 4px; }
+.modes-icon { display: grid; place-items: center; flex: none; width: 48px; height: 48px; border-radius: 12px; background: var(--accent-soft); color: var(--lav-text); }
+.modes-icon svg { width: 22px; height: 22px; }
+.modes-head h2 { margin: 0 0 2px; font-size: 17px; letter-spacing: -.3px; }
+.modes-head p { margin: 0; color: var(--muted); font-size: 14px; }
+
+.mode-card { display: flex; align-items: center; gap: 16px; padding: 18px 20px; border-radius: 14px; border: 1px solid transparent; background: color-mix(in srgb, var(--lav) 10%, var(--surface)); color: var(--text); text-decoration: none; transition: background-color .2s, border-color .2s, transform .2s; }
+.mode-card:hover { background: color-mix(in srgb, var(--lav) 17%, var(--surface)); border-color: var(--accent-line); transform: translateY(-1px); }
+.mode-icon { display: grid; place-items: center; flex: none; width: 24px; color: var(--lav-text); }
+.mode-icon svg { width: 20px; height: 20px; }
+.mode-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.mode-text strong { font-size: 16px; letter-spacing: -.2px; }
+.mode-text small { color: var(--muted); font-size: 14px; }
+.mode-arrow { flex: none; width: 18px; height: 18px; color: var(--lav-text); }
+
+.mode-card.is-disabled { opacity: .55; cursor: not-allowed; }
+.mode-card.is-disabled:hover { transform: none; background: color-mix(in srgb, var(--lav) 10%, var(--surface)); border-color: transparent; }
+
+/* ── Current document ── */
+.doc-row { display: flex; align-items: center; gap: 14px; margin-top: 22px; padding: 0 6px; }
+.doc-icon { flex: none; width: 20px; height: 20px; color: var(--lav-text); }
+.doc-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.doc-text strong { font-size: 16px; }
+.doc-text span { color: var(--muted); font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.doc-state { display: grid; place-items: center; color: var(--green); }
+.doc-state svg { width: 22px; height: 22px; }
+.doc-row.is-missing .doc-state { color: var(--coral); }
+
+.teach-foot { margin: 22px 0 0; text-align: center; color: var(--faint); font-size: 13px; }
+
+@media (max-width: 680px) {
+  .mode-card { padding: 16px; gap: 14px; }
+  .doc-text span { white-space: normal; }
+}

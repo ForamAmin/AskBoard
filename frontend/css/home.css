@@ -1,0 +1,87 @@
+/* AskBoard — Home / dashboard extras. Loads after styles.css. */
+
+/* ── Ambient background: slow drifting colour + faint dot grid ── */
+.ambient { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.ambient::before {
+  content: ""; position: absolute; inset: 0;
+  background-image: radial-gradient(var(--grid) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: radial-gradient(ellipse 75% 60% at 50% 30%, #000 25%, transparent 82%);
+  mask-image: radial-gradient(ellipse 75% 60% at 50% 30%, #000 25%, transparent 82%);
+}
+.orb { position: absolute; border-radius: 50%; filter: blur(70px); opacity: .4; will-change: transform; }
+[data-theme="dark"] .orb { opacity: .2; }
+.orb-a { width: 480px; height: 480px; left: -140px; top: 4%;   background: var(--lav);  animation: orb-a 24s ease-in-out infinite alternate; }
+.orb-b { width: 420px; height: 420px; right: -110px; top: 22%; background: var(--warm); animation: orb-b 28s ease-in-out infinite alternate; }
+.orb-c { width: 380px; height: 380px; left: 36%; bottom: -180px; background: var(--lav); animation: orb-c 32s ease-in-out infinite alternate; }
+@keyframes orb-a { to { transform: translate(150px, 120px) scale(1.15); } }
+@keyframes orb-b { to { transform: translate(-140px, -100px) scale(1.12); } }
+@keyframes orb-c { to { transform: translate(-170px, -70px) scale(1.2); } }
+
+/* ── Scroll reveal (only active when JavaScript is running) ── */
+.has-js .reveal:not(.is-in) { opacity: 0; }
+.has-js .reveal.is-in { animation: reveal-up .75s cubic-bezier(.22, .8, .3, 1) var(--d, 0s) backwards; }
+@keyframes reveal-up { from { opacity: 0; transform: translateY(20px); } }
+
+/* ── Small fixes for the shared pieces ── */
+a.nav-item, a.action-card, a.next-item { text-decoration: none; }
+.button[hidden] { display: none; }
+.topbar-avatar { display: grid; place-items: center; font-family: inherit; }
+.topbar-avatar svg { width: 16px; height: 16px; }
+
+/* ── Hero preview ── */
+.hero .preview { animation: preview-float 8s ease-in-out infinite; }
+@keyframes preview-float { 50% { transform: translateY(-8px); } }
+#previewBody { display: flex; flex-direction: column; gap: 12px; }
+.preview-empty { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 26px 16px; text-align: center; border: 1px dashed var(--accent-line); border-radius: 14px; background: var(--surface-2); }
+.preview-empty strong { font-size: 14px; }
+.preview-empty span:not(.preview-empty-icon) { color: var(--muted); font-size: 13px; }
+.preview-empty-icon { display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: 4px; border-radius: 12px; background: var(--accent-soft); color: var(--lav); }
+.preview-empty-icon svg { width: 19px; height: 19px; }
+.bubble-q span, .bubble-a p { overflow-wrap: anywhere; }
+
+/* ── Stats ── */
+.negative { color: var(--coral); font-weight: 600; display: inline-flex; align-items: center; gap: 2px; }
+.negative svg, .stat-foot .positive svg { width: 13px; height: 13px; }
+.mini-progress i { transition: width .9s cubic-bezier(.22, .8, .3, 1); }
+.stat-value [data-count] { font-variant-numeric: tabular-nums; }
+
+/* ── Activity chart ── */
+.chart-caption { margin: 6px 0 0; color: var(--faint); font-size: 12px; }
+.chart-empty { position: absolute; left: 0; right: 0; top: calc(var(--chart-h) / 2 - 12px); margin: 0; text-align: center; color: var(--muted); font-size: 13px; pointer-events: none; }
+.chart-empty[hidden] { display: none; }
+.chart svg circle.chart-dot { stroke-width: 3; }
+.chart svg circle.chart-dot.is-last { stroke-width: 5; }
+.chart svg.is-drawing { animation: chart-reveal 1.1s cubic-bezier(.22, .8, .3, 1) both; }
+@keyframes chart-reveal {
+  from { clip-path: inset(-12px 100% -12px 0); }
+  to   { clip-path: inset(-12px -12px -12px 0); }
+}
+
+/* ── Continue studying panel ── */
+#focusBody .focus-card { margin-top: 19px; }
+.focus-card h3 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.focus-card p { overflow-wrap: anywhere; }
+.focus-progress { margin-bottom: 15px; }
+.progress-track i { transition: width .9s cubic-bezier(.22, .8, .3, 1); }
+.focus-links { display: flex; gap: 8px; margin-top: 8px; }
+.focus-links .button { flex: 1; padding: 9px 10px; font-size: 12px; background: transparent; border: 1px solid var(--border); }
+.focus-links .button:hover { border-color: var(--accent-line); background: var(--surface-2); }
+.next-item { color: var(--muted); border-radius: 10px; transition: background-color .2s; }
+.next-item:hover { background: var(--surface-2); }
+
+/* ── Documents ── */
+.documents-list:empty { display: none; }
+.document-row { cursor: pointer; border-radius: 10px; transition: background-color .2s; }
+.document-row:hover { background: var(--surface-2); }
+.document-row:focus-visible { outline: 2px solid var(--lav); outline-offset: -2px; }
+.document-row.is-current .document-info strong { color: var(--lav-text); }
+.documents-empty { display: none; flex-direction: column; align-items: center; gap: 4px; padding: 26px 16px 22px; text-align: center; color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); }
+.documents-empty strong { color: var(--text); font-size: 14px; }
+.documents-empty.is-visible { display: flex; }
+
+/* ── Quick actions: four across ── */
+.action-cards { grid-template-columns: repeat(4, 1fr); }
+.action-card small { overflow-wrap: anywhere; }
+@media (max-width: 1060px) { .action-cards { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 680px)  { .action-cards { grid-template-columns: 1fr; } }

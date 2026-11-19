@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Choose how to study your PDF: take a quiz, teach it back, or get a topic explained.">
+  <title>Teach Me · AskBoard</title>
+
+  <!-- Apply the saved (or system) theme before first paint to avoid a flash -->
+  <script>
+    (function () {
+      var theme = null;
+      try { theme = localStorage.getItem("askboard-theme"); } catch (e) {}
+      if (theme !== "light" && theme !== "dark") {
+        theme = window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      }
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css?v=3">
+  <link rel="stylesheet" href="css/teach.css?v=1">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <header class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a class="brand" href="index.html" aria-label="AskBoard home">
+        <span class="brand-mark"><i data-lucide="sparkles"></i></span>
+        <span>askboard</span>
+      </a>
+
+      <nav class="main-nav" id="mainNav" aria-label="Main navigation">
+        <a class="nav-item" href="index.html"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></a>
+        <button class="nav-item" data-view="Study"><i data-lucide="book-open"></i><span>Study</span><span class="nav-badge">3</span></button>
+        <a class="nav-item" href="revision.html"><i data-lucide="rotate-ccw"></i><span>Revision</span></a>
+        <button class="nav-item" data-view="Summarize"><i data-lucide="wand-sparkles"></i><span>Summarize</span><span class="ai-pill">AI</span></button>
+        <button class="nav-item" data-view="Reports"><i data-lucide="chart-no-axes-combined"></i><span>Reports</span></button>
+      </nav>
+
+      <div class="navbar-actions">
+        <button class="icon-button" id="searchFocus" aria-label="Go to learning modes"><i data-lucide="search"></i></button>
+        <button class="icon-button" data-view="Settings" aria-label="Settings"><i data-lucide="settings"></i></button>
+
+<button class="icon-button" id="themeToggle"
+        aria-label="Switch theme" title="Switch theme">
+  <span class="theme-icon icon-sun">
+    <i data-lucide="sun"></i>
+  </span>
+  <span class="theme-icon icon-moon">
+    <i data-lucide="moon"></i>
+  </span>
+</button>
+
+        <button class="icon-button notification-button" aria-label="Notifications"><i data-lucide="bell"></i><span></span></button>
+        <button class="topbar-avatar" aria-label="Profile">AR</button>
+        <button class="icon-button mobile-menu" id="menuToggle" aria-label="Open menu" aria-expanded="false"><i data-lucide="menu"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-content teach-page" id="top">
+    <section class="panel teach-card">
+      <a class="back-link" href="index.html"><i data-lucide="arrow-left"></i> Back to Dashboard</a>
+
+      <header class="teach-head">
+        <p class="eyebrow">Learn differently</p>
+        <h1>Teach Me.</h1>
+        <p class="teach-sub">Don’t just read it. Understand it, explain it, and remember it.</p>
+      </header>
+
+      <section class="modes" id="modes" aria-labelledby="modesTitle">
+        <div class="modes-head">
+          <span class="modes-icon"><i data-lucide="brain"></i></span>
+          <div>
+            <h2 id="modesTitle">Choose your learning mode</h2>
+            <p>Pick how you want to study today.</p>
+          </div>
+        </div>
+
+        <a class="mode-card" href="quiz.html" data-mode="Quiz Me">
+          <span class="mode-icon"><i data-lucide="list-checks"></i></span>
+          <span class="mode-text"><strong>Quiz Me</strong><small>Test your knowledge with 5 questions.</small></span>
+          <i class="mode-arrow" data-lucide="chevron-right"></i>
+        </a>
+
+        <a class="mode-card" href="teach-back.html" data-mode="Teach It Back">
+          <span class="mode-icon"><i data-lucide="mic"></i></span>
+          <span class="mode-text"><strong>Teach It Back</strong><small>Explain a topic aloud for 2–3 minutes.</small></span>
+          <i class="mode-arrow" data-lucide="chevron-right"></i>
+        </a>
+
+        <a class="mode-card" href="explain.html" data-mode="Explain a Topic">
+          <span class="mode-icon"><i data-lucide="lightbulb"></i></span>
+          <span class="mode-text"><strong>Explain a Topic</strong><small>Understand difficult concepts with AI.</small></span>
+          <i class="mode-arrow" data-lucide="chevron-right"></i>
+        </a>
+      </section>
+
+      <div class="doc-row" id="docRow">
+        <i class="doc-icon" data-lucide="file-text"></i>
+        <div class="doc-text">
+          <strong>Current document</strong>
+          <span id="docStatus">Your uploaded PDF · Ready to learn</span>
+        </div>
+        <span class="doc-state" id="docState"><i data-lucide="circle-check"></i></span>
+      </div>
+
+      <p class="teach-foot">A little progress every day adds up.</p>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="js/teach.js?v=1"></script>
+</body>
+</html>
